@@ -65,7 +65,7 @@
             <div id="hostTabConfig">
                 <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800 mb-4">
                     <div class="text-sm">
-                        當前玩家總人數：<span id="totalSelectedCount" class="text-xl font-extrabold text-amber-400">0</span> 人
+                        當前選擇卡牌總數：<span id="totalSelectedCount" class="text-xl font-extrabold text-amber-400">0</span> 張
                     </div>
                     <button onclick="clearRoleSelection()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-400 px-3 py-1.5 rounded border border-slate-600">清空點選</button>
                 </div>
@@ -167,63 +167,58 @@
             </div>
 
             <div id="playerActiveSection" class="hidden">
-                <div class="mb-4">
+                <!-- 未選號時顯示選單 -->
+                <div id="selectSeatBox" class="mb-4">
                     <label class="block text-sm mb-2 text-slate-300">請選擇你的座次號碼：</label>
                     <select id="playerSelectId" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white text-base">
                         <option value="">請選擇號碼...</option>
                     </select>
+                    <button onclick="playerClaimId()" class="w-full bg-blue-600 hover:bg-blue-700 font-bold py-3 rounded-xl shadow transition mt-4">🔒 確認並鎖定我的身分</button>
                 </div>
-                <button onclick="playerClaimId()" class="w-full bg-blue-600 hover:bg-blue-700 font-bold py-3 rounded-xl shadow transition mb-6">🔒 確認並鎖定我的身分</button>
 
-                <!-- 超大實體卡牌展示區（參考高級狼人殺卡牌） -->
+                <!-- 超大實體卡牌展示區 -->
                 <div id="myIdentityCard" class="hidden">
-                    <!-- 頂部資訊列 -->
                     <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800 mb-3">
                         <div class="text-xs text-slate-400 flex items-center gap-1.5">
                             <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
                             <span>狼人殺身分卡</span>
                         </div>
                         <div class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30">
-                            <span id="myIdDisplay">0</span> 號席位
+                            <span id="myIdDisplay">0</span> 號席位 (已鎖定)
                         </div>
                     </div>
 
                     <!-- 🔥 巨大卡牌框 -->
                     <div id="cardFrame" class="relative bg-slate-950 border-2 border-red-600/60 rounded-3xl p-6 text-center shadow-[0_0_25px_rgba(220,38,38,0.25)] min-h-[320px] flex flex-col justify-between items-center transition-all duration-300">
-                        
-                        <!-- 陣營標籤（右上方） -->
                         <div class="w-full flex justify-end">
                             <span id="myCampTag" class="text-xs font-bold px-3 py-1 rounded-full bg-red-900/50 text-red-300 border border-red-500/30">
                                 未知陣營
                             </span>
                         </div>
 
-                        <!-- 卡牌核心名稱（字體超級大） -->
                         <div class="my-auto py-6">
                             <div class="text-4xl sm:text-6xl font-black tracking-widest leading-tight text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" id="myRoleDisplay">
                                 ???
                             </div>
                         </div>
 
-                        <!-- 底部裝飾線條 -->
                         <div class="w-full border-t border-slate-800/80 pt-2 text-[10px] text-slate-500">
                             WEREWOLF GAME CARD
                         </div>
                     </div>
 
-                    <!-- 👁️ 翻開與蓋上按鈕 -->
                     <button onclick="toggleMyRoleVisibility()" id="toggleRoleBtn" class="w-full mt-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-3.5 rounded-xl text-base transition shadow-lg flex items-center justify-center gap-2">
                         👁️ 點擊查看身分（翻開）
                     </button>
 
-                    <!-- 🕵️‍♂️ 盜賊選擇區（翻開身分且是盜賊時才顯示） -->
+                    <!-- 🕵️‍♂️ 盜賊選擇區 -->
                     <div id="thiefChoiceSection" class="hidden mt-4 p-4 bg-slate-950 border border-amber-500/50 rounded-2xl shadow-xl">
                         <p class="text-amber-300 font-bold text-sm mb-1">🕵️‍♂️ 你抽到了「盜賊」！請選擇一張底牌替換：</p>
                         <p class="text-[11px] text-red-400 mb-3">⚠️ 若底牌含狼人牌，必須強制選擇狼人身分！</p>
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="thiefCardOptionsContainer"></div>
                     </div>
 
-                    <p class="text-xs text-slate-400 text-center mt-3">✨ 此身分已與你的裝置綁定，請記住後將手機收起！</p>
+                    <p class="text-xs text-slate-400 text-center mt-3">✨ 此號碼已與你的手機綁定，請記住後將手機收起！</p>
                 </div>
             </div>
         </div>
@@ -264,7 +259,6 @@
             }
         };
 
-        // 👁️ 翻開／蓋上身分卡（並根據翻開狀態控制盜賊區的顯示）
         window.toggleMyRoleVisibility = function() {
             window.isRoleRevealed = !window.isRoleRevealed;
             applyRoleCardUI();
@@ -282,7 +276,6 @@
                 toggleBtn.innerText = "🔒 點擊蓋上身分（防偷窺）";
                 toggleBtn.className = "w-full mt-4 bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-3.5 rounded-xl text-base transition shadow-lg flex items-center justify-center gap-2";
 
-                // 設定陣營標籤與邊框光澤
                 if (roleCategories.wolf.includes(window.currentRealRole)) {
                     campTag.innerText = "🔴 狼人陣營";
                     campTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-red-900/50 text-red-300 border border-red-500/30";
@@ -305,7 +298,6 @@
                     roleDisplay.className = "text-4xl sm:text-6xl font-black tracking-widest leading-tight text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.6)]";
                 }
 
-                // 只有當「翻開卡牌」且「當前身分為盜賊」時，才顯示盜賊底牌替換區
                 let savedId = localStorage.getItem('werewolf_my_claimed_id');
                 let players = window.globalRoomData ? window.globalRoomData.players : [];
                 let myPlayer = players.find(p => p.id === parseInt(savedId));
@@ -324,8 +316,6 @@
                 campTag.innerText = "🔒 身分已蓋上";
                 campTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700";
                 cardFrame.className = "relative bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 text-center shadow-md min-h-[320px] flex flex-col justify-between items-center transition-all duration-300";
-                
-                // 蓋上牌時強制隱藏盜賊底牌選擇區
                 thiefChoiceSection.classList.add('hidden');
             }
         }
@@ -480,6 +470,7 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
+        // 🎲 發牌核心邏輯：只有勾選「盜賊」時才扣 2 張當底牌，否則卡牌數等於玩家數
         window.hostStartGame = async function() {
             let allCards = [];
             Object.entries(selectedRoleCounts).forEach(([role, count]) => {
@@ -493,20 +484,30 @@
                 return;
             }
 
-            // 隨機洗牌所有牌
+            let hasThiefSelected = allCards.includes('盜賊');
+            
+            // 隨機洗牌
             for (let i = allCards.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
             }
 
-            // 抽出 2 張當作底牌
-            let extraCards = [allCards.pop(), allCards.pop()];
-            let playerRoles = allCards; // 剩下的發給玩家
+            let extraCards = [];
+            let playerRoles = [];
 
-            // 檢查這局實際發牌給玩家後，有沒有人拿到盜賊
+            if (hasThiefSelected) {
+                // 有盜賊時：抽 2 張當底牌，其餘發給玩家
+                extraCards = [allCards.pop(), allCards.pop()];
+                playerRoles = allCards;
+            } else {
+                // 沒盜賊時：所有選擇的牌全部發給玩家
+                extraCards = [];
+                playerRoles = allCards;
+            }
+
             let thiefAssigned = playerRoles.includes('盜賊');
-
             const playerCount = playerRoles.length;
+            
             let players = [];
             for (let i = 0; i < playerCount; i++) {
                 players.push({
@@ -526,7 +527,7 @@
                     thiefExtraCards: extraCards,
                     hasThief: thiefAssigned
                 });
-                alert(`🎲 發牌成功！總牌數：${playerCount + 2} 張（含 2 張底牌）。`);
+                alert(`🎲 發牌成功！實際參與玩家：${playerCount} 人${hasThiefSelected ? '（含 2 張底牌）' : ''}。`);
                 switchHostTab('game');
             } catch (err) {
                 console.error(err);
@@ -562,6 +563,7 @@
             }
         };
 
+        // 🔒 玩家選擇號碼並永久綁定該裝置
         window.playerClaimId = async function() {
             const select = document.getElementById('playerSelectId');
             const selectedId = parseInt(select.value);
@@ -583,14 +585,6 @@
             if (targetPlayer.claimedBy && targetPlayer.claimedBy !== myDeviceToken) {
                 alert(`⚠️ 此號碼已被其他手機領走了！`);
                 return;
-            }
-
-            let alreadyClaimedId = localStorage.getItem('werewolf_my_claimed_id');
-            if (alreadyClaimedId && parseInt(alreadyClaimedId) !== selectedId) {
-                let oldPlayer = players.find(p => p.id === parseInt(alreadyClaimedId));
-                if (oldPlayer && oldPlayer.claimedBy === myDeviceToken) {
-                    oldPlayer.claimedBy = null;
-                }
             }
 
             targetPlayer.claimedBy = myDeviceToken;
@@ -643,16 +637,17 @@
                 document.getElementById('statAliveGods').innerText = 0;
                 document.getElementById('statAliveCivilians').innerText = 0;
             } else {
-                hostThiefArea.classList.remove('hidden');
-                if (data.hasThief && data.thiefExtraCards && data.thiefExtraCards.length > 0) {
-                    hostThiefTitle.innerText = "🕵️‍♂️ 本局盜賊發給玩家了！桌上扣除的 2 張底牌為：";
-                    hostThiefCardsDisplay.innerText = `🃏 底牌 1：【${data.thiefExtraCards[0]}】 ｜ 🃏 底牌 2：【${data.thiefExtraCards[1]}】`;
-                } else if (data.thiefExtraCards && data.thiefExtraCards.length > 0) {
-                    hostThiefTitle.innerText = "🕵️‍♂️ 盜賊被洗進底牌中！";
-                    hostThiefCardsDisplay.innerText = `⚠️ 兩張底牌中包含「盜賊」！本局遊戲【整場無盜賊】`;
+                if (data.thiefExtraCards && data.thiefExtraCards.length > 0) {
+                    hostThiefArea.classList.remove('hidden');
+                    if (data.hasThief) {
+                        hostThiefTitle.innerText = "🕵️‍♂️ 本局盜賊發給玩家了！桌上扣除的 2 張底牌為：";
+                        hostThiefCardsDisplay.innerText = `🃏 底牌 1：【${data.thiefExtraCards[0]}】 ｜ 🃏 底牌 2：【${data.thiefExtraCards[1]}】`;
+                    } else {
+                        hostThiefTitle.innerText = "🕵️‍♂️ 盜賊被洗進底牌中！";
+                        hostThiefCardsDisplay.innerText = `⚠️ 兩張底牌中包含「盜賊」！本局遊戲【整場無盜賊】`;
+                    }
                 } else {
-                    hostThiefTitle.innerText = "🕵️‍♂️ 本局無配置盜賊：";
-                    hostThiefCardsDisplay.innerText = `無底牌配置`;
+                    hostThiefArea.classList.add('hidden');
                 }
 
                 let aliveWolves = 0;
@@ -698,23 +693,29 @@
                 waitNotice.classList.add('hidden');
                 activeSection.classList.remove('hidden');
                 
-                let currentSelectedVal = select.value;
-                select.innerHTML = '<option value="">請選擇號碼...</option>';
-                for (let i = 1; i <= data.count; i++) {
-                    let p = data.players.find(x => x.id === i);
-                    let statusText = p && p.claimedBy ? ' (已被選)' : '';
-                    select.innerHTML += `<option value="${i}">${i} 號玩家${statusText}</option>`;
-                }
-                if(currentSelectedVal) select.value = currentSelectedVal;
-
+                // 檢查該裝置是否已經選過號碼
                 let myDeviceToken = localStorage.getItem('werewolf_device_token');
                 let savedId = localStorage.getItem('werewolf_my_claimed_id');
+
                 if (myDeviceToken && savedId) {
                     let matchedPlayer = data.players.find(p => p.id === parseInt(savedId));
                     if (matchedPlayer && matchedPlayer.claimedBy === myDeviceToken) {
-                        select.value = savedId;
+                        // 已選過號碼：直接隱藏選擇下拉選單，鎖定該玩家介面
+                        document.getElementById('selectSeatBox').classList.add('hidden');
                         showMyIdentity(matchedPlayer);
+                    } else {
+                        document.getElementById('selectSeatBox').classList.remove('hidden');
                     }
+                } else {
+                    document.getElementById('selectSeatBox').classList.remove('hidden');
+                    let currentSelectedVal = select.value;
+                    select.innerHTML = '<option value="">請選擇號碼...</option>';
+                    for (let i = 1; i <= data.count; i++) {
+                        let p = data.players.find(x => x.id === i);
+                        let statusText = p && p.claimedBy ? ' (已被選)' : '';
+                        select.innerHTML += `<option value="${i}" ${p && p.claimedBy ? 'disabled' : ''}>${i} 號玩家${statusText}</option>`;
+                    }
+                    if(currentSelectedVal) select.value = currentSelectedVal;
                 }
             }
         };
@@ -725,7 +726,6 @@
             
             document.getElementById('myIdentityCard').classList.remove('hidden');
 
-            // 渲染盜賊選項按鈕
             const thiefContainer = document.getElementById('thiefCardOptionsContainer');
             if (window.globalRoomData.hasThief && player.initialRole === '盜賊' && player.role === '盜賊' && window.globalRoomData.thiefExtraCards) {
                 thiefContainer.innerHTML = '';
