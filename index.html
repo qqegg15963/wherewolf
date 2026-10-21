@@ -102,7 +102,7 @@
                     <div class="text-base font-extrabold text-red-400" id="hostThiefCardsDisplay">等待盜賊玩家選擇中...</div>
                 </div>
 
-                <!-- 📊 陣營存活即時統計（新增：用來判斷綁票） -->
+                <!-- 📊 陣營存活即時統計（用來判斷綁票） -->
                 <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700 mb-4">
                     <div class="text-xs text-amber-300 font-bold mb-2">📊 當前場上陣營存活統計（即時監控綁票）</div>
                     <div class="grid grid-cols-3 gap-2 text-center">
@@ -193,7 +193,7 @@
     </div>
 
     <script type="module">
-        import { setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const HOST_PASSWORD = "1234";
 
@@ -207,25 +207,25 @@
         let selectedRoleCounts = {};
         let countdownInterval = null;
         let titleClickCount = 0;
-        let titleClickTimer = null;
 
+        // 改進版：直接無延遲快速連點 3 下觸發上帝登入
         window.handleTitleClick = function() {
             let savedId = localStorage.getItem('werewolf_my_claimed_id');
             if (savedId) {
-                return;
+                return; // 已領取身分的玩家直接鎖定禁止進入
             }
 
             titleClickCount++;
-            clearTimeout(titleClickTimer);
             
             if (titleClickCount >= 3) {
                 titleClickCount = 0;
                 tryUnlockHost();
-            } else {
-                titleClickTimer = setTimeout(() => {
-                    titleClickCount = 0;
-                }, 1000);
             }
+
+            // 1.5秒內沒有點滿3下則自動重置計數
+            setTimeout(() => {
+                titleClickCount = 0;
+            }, 1500);
         };
 
         function initRolePicker() {
@@ -554,7 +554,6 @@
                 hostThiefArea.classList.add('hidden');
                 waitNotice.classList.remove('hidden');
                 activeSection.classList.add('hidden');
-                // 歸零統計
                 document.getElementById('statAliveWolves').innerText = 0;
                 document.getElementById('statAliveGods').innerText = 0;
                 document.getElementById('statAliveCivilians').innerText = 0;
@@ -566,7 +565,6 @@
                     hostThiefArea.classList.add('hidden');
                 }
 
-                // 計算即時陣營存活人數
                 let aliveWolves = 0;
                 let aliveGods = 0;
                 let aliveCivilians = 0;
@@ -578,7 +576,7 @@
                         } else if (roleCategories.god.includes(p.role)) {
                             aliveGods++;
                         } else {
-                            aliveCivilians++; // 平民與第三方（如野孩子等未獨立計算時歸類於此）
+                            aliveCivilians++;
                         }
                     }
                 });
