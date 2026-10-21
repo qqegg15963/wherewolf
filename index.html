@@ -41,7 +41,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-3 sm:p-6 font-sans flex flex-col justify-between">
     <div class="max-w-4xl mx-auto w-full">
-        <!-- 點擊大標題：普通連點 3 下解鎖；若被玩家鎖定，快速連點 5 下即可救急強制解鎖 -->
+        <!-- 點擊大標題：普通連點 3 下解鎖；若被鎖定，快速連點 5 下即可救急強制解鎖 -->
         <h1 onclick="handleTitleClick()" class="text-2xl sm:text-3xl font-bold text-center mb-4 text-red-500 tracking-wider cursor-pointer select-none">🐺 狼人殺 🌙</h1>
 
         <!-- 👑 上帝介面（預設隱藏） -->
@@ -98,8 +98,8 @@
             <!-- ================= 畫面二：遊戲進行主持區 ================= -->
             <div id="hostTabGame" class="hidden">
                 <div id="hostThiefArea" class="hidden mb-4 p-3 bg-slate-900 border border-amber-500/50 rounded-xl">
-                    <div class="text-amber-400 font-bold text-xs mb-1">🕵️‍♂️ 本局包含「盜賊」！系統扣除的 2 張底牌為：</div>
-                    <div class="text-base font-extrabold text-red-400" id="hostThiefCardsDisplay">等待盜賊玩家選擇中...</div>
+                    <div class="text-amber-400 font-bold text-xs mb-1" id="hostThiefTitle">🕵️‍♂️ 底牌狀態：</div>
+                    <div class="text-base font-extrabold text-red-400" id="hostThiefCardsDisplay">載入中...</div>
                 </div>
 
                 <!-- 📊 陣營存活即時統計 -->
@@ -177,13 +177,13 @@
 
                 <!-- 身分卡片區 -->
                 <div id="myIdentityCard" class="hidden bg-slate-900 border-2 border-amber-500 p-6 rounded-2xl text-center shadow-lg">
-                    <div class="text-slate-400 text-sm">你的座次：<span id="myIdDisplay" class="text-amber-300 font-bold text-lg"></span> 號</div>
+                    <div class="text-slate-400 text-sm mb-1">你的座次：<span id="myIdDisplay" class="text-amber-300 font-bold text-lg"></span> 號</div>
                     
-                    <!-- 隱私遮蔽身分顯示區 -->
-                    <div class="text-3xl sm:text-4xl font-extrabold text-red-400 my-4 tracking-wider" id="myRoleDisplay">???</div>
+                    <!-- 隱私遮蔽身分顯示區（字體加大放大） -->
+                    <div class="text-4xl sm:text-5xl font-black text-red-500 my-6 tracking-widest min-h-[60px] flex items-center justify-center" id="myRoleDisplay">???</div>
 
                     <!-- 👁️ 翻開與蓋上按鈕 -->
-                    <button onclick="toggleMyRoleVisibility()" id="toggleRoleBtn" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow">
+                    <button onclick="toggleMyRoleVisibility()" id="toggleRoleBtn" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-3 rounded-xl text-base transition mb-4 shadow">
                         👁️ 點擊查看身分（翻開）
                     </button>
 
@@ -220,7 +220,6 @@
         window.isRoleRevealed = false;
         window.currentRealRole = "";
 
-        // 改進版救急點擊：3連擊普通進入，若被鎖定快速5連擊可強制觸發上帝登入
         window.handleTitleClick = function() {
             let savedId = localStorage.getItem('werewolf_my_claimed_id');
             titleClickCount++;
@@ -230,7 +229,6 @@
                 titleClickCount = 0;
             }, 1500);
 
-            // 未鎖定狀況：點擊 3 下進入；若已被鎖定：快速點擊 5 下強制救急解鎖
             if ((!savedId && titleClickCount >= 3) || (savedId && titleClickCount >= 5)) {
                 titleClickCount = 0;
                 tryUnlockHost();
@@ -245,11 +243,11 @@
             if (window.isRoleRevealed) {
                 roleDisplay.innerText = window.currentRealRole;
                 toggleBtn.innerText = "🔒 點擊隱藏身分（蓋上）";
-                toggleBtn.className = "w-full bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow";
+                toggleBtn.className = "w-full bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-3 rounded-xl text-base transition mb-4 shadow";
             } else {
                 roleDisplay.innerText = "???";
                 toggleBtn.innerText = "👁️ 點擊查看身分（翻開）";
-                toggleBtn.className = "w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow";
+                toggleBtn.className = "w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-3 rounded-xl text-base transition mb-4 shadow";
             }
         };
 
@@ -416,38 +414,20 @@
                 return;
             }
 
-            let hasThief = allCards.includes('盜賊');
-            let extraCards = [];
-            let playerRoles = [...allCards];
-
-            if (hasThief) {
-                if (allCards.length < 6) {
-                    alert('包含盜賊時，所選角色牌總數至少需 6 張以上！');
-                    return;
-                }
-
-                for (let i = playerRoles.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [playerRoles[i], playerRoles[j]] = [playerRoles[j], playerRoles[i]];
-                }
-
-                let nonThiefIndices = [];
-                playerRoles.forEach((role, idx) => {
-                    if (role !== '盜賊') nonThiefIndices.push(idx);
-                });
-
-                let idx1 = nonThiefIndices.splice(Math.floor(Math.random() * nonThiefIndices.length), 1)[0];
-                let idx2 = nonThiefIndices.splice(Math.floor(Math.random() * nonThiefIndices.length), 1)[0];
-
-                let sortedIndices = [idx1, idx2].sort((a, b) => b - a);
-                extraCards.push(playerRoles.splice(sortedIndices[0], 1)[0]);
-                extraCards.push(playerRoles.splice(sortedIndices[1], 1)[0]);
-            } else {
-                for (let i = playerRoles.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [playerRoles[i], playerRoles[j]] = [playerRoles[j], playerRoles[i]];
-                }
+            let hasThiefSelected = allCards.includes('盜賊');
+            
+            // 隨機洗牌所有牌
+            for (let i = allCards.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
             }
+
+            // 抽出 2 張當作底牌
+            let extraCards = [allCards.pop(), allCards.pop()];
+            let playerRoles = allCards; // 剩下的直接發給玩家
+
+            // 檢查這局實際發牌給玩家後，有沒有人拿到盜賊
+            let thiefAssigned = playerRoles.includes('盜賊');
 
             const playerCount = playerRoles.length;
             let players = [];
@@ -467,9 +447,9 @@
                     count: playerCount,
                     players: players,
                     thiefExtraCards: extraCards,
-                    hasThief: hasThief
+                    hasThief: thiefAssigned
                 });
-                alert(`🎲 發牌成功！總牌數：${allCards.length} 張，實際發給玩家：${playerCount} 人。`);
+                alert(`🎲 發牌成功！總牌數：${playerCount + 2} 張（含 2 張底牌）。`);
                 switchHostTab('game');
             } catch (err) {
                 console.error(err);
@@ -574,6 +554,7 @@
             const activeSection = document.getElementById('playerActiveSection');
             const select = document.getElementById('playerSelectId');
             const hostThiefArea = document.getElementById('hostThiefArea');
+            const hostThiefTitle = document.getElementById('hostThiefTitle');
             const hostThiefCardsDisplay = document.getElementById('hostThiefCardsDisplay');
 
             if (data.status === "waiting") {
@@ -585,11 +566,16 @@
                 document.getElementById('statAliveGods').innerText = 0;
                 document.getElementById('statAliveCivilians').innerText = 0;
             } else {
+                hostThiefArea.classList.remove('hidden');
                 if (data.hasThief && data.thiefExtraCards && data.thiefExtraCards.length > 0) {
-                    hostThiefArea.classList.remove('hidden');
+                    hostThiefTitle.innerText = "🕵️‍♂️ 本局盜賊發給玩家了！桌上扣除的 2 張底牌為：";
                     hostThiefCardsDisplay.innerText = `🃏 底牌 1：【${data.thiefExtraCards[0]}】 ｜ 🃏 底牌 2：【${data.thiefExtraCards[1]}】`;
+                } else if (data.thiefExtraCards && data.thiefExtraCards.length > 0) {
+                    hostThiefTitle.innerText = "🕵️‍♂️ 盜賊被洗進底牌中！";
+                    hostThiefCardsDisplay.innerText = `⚠️ 兩張底牌中包含「盜賊」！本局遊戲【整場無盜賊】`;
                 } else {
-                    hostThiefArea.classList.add('hidden');
+                    hostThiefTitle.innerText = "🕵️‍♂️ 本局無配置盜賊：";
+                    hostThiefCardsDisplay.innerText = `無底牌配置`;
                 }
 
                 let aliveWolves = 0;
@@ -666,11 +652,11 @@
             if (window.isRoleRevealed) {
                 roleDisplay.innerText = window.currentRealRole;
                 toggleBtn.innerText = "🔒 點擊隱藏身分（蓋上）";
-                toggleBtn.className = "w-full bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow";
+                toggleBtn.className = "w-full bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-3 rounded-xl text-base transition mb-4 shadow";
             } else {
                 roleDisplay.innerText = "???";
                 toggleBtn.innerText = "👁️ 點擊查看身分（翻開）";
-                toggleBtn.className = "w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow";
+                toggleBtn.className = "w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-3 rounded-xl text-base transition mb-4 shadow";
             }
 
             document.getElementById('myIdentityCard').classList.remove('hidden');
@@ -678,7 +664,8 @@
             const thiefChoiceSection = document.getElementById('thiefChoiceSection');
             const thiefContainer = document.getElementById('thiefCardOptionsContainer');
 
-            if (player.initialRole === '盜賊' && player.role === '盜賊' && window.globalRoomData.thiefExtraCards) {
+            // 只有當初發牌時有配置盜賊，且該玩家拿的是盜賊，且尚未選過身分時才顯示選擇區
+            if (window.globalRoomData.hasThief && player.initialRole === '盜賊' && player.role === '盜賊' && window.globalRoomData.thiefExtraCards) {
                 thiefChoiceSection.classList.remove('hidden');
                 thiefContainer.innerHTML = '';
                 
