@@ -175,9 +175,17 @@
                 </div>
                 <button onclick="playerClaimId()" class="w-full bg-blue-600 hover:bg-blue-700 font-bold py-3 rounded-xl shadow transition mb-6">🔒 確認並鎖定我的身分</button>
 
+                <!-- 身分卡片區 -->
                 <div id="myIdentityCard" class="hidden bg-slate-900 border-2 border-amber-500 p-6 rounded-2xl text-center shadow-lg">
                     <div class="text-slate-400 text-sm">你的座次：<span id="myIdDisplay" class="text-amber-300 font-bold text-lg"></span> 號</div>
-                    <div class="text-3xl sm:text-4xl font-extrabold text-red-400 my-4" id="myRoleDisplay">???</div>
+                    
+                    <!-- 隱私遮蔽身分顯示區 -->
+                    <div class="text-3xl sm:text-4xl font-extrabold text-red-400 my-4 tracking-wider" id="myRoleDisplay">???</div>
+
+                    <!-- 👁️ 翻開與蓋上按鈕 -->
+                    <button onclick="toggleMyRoleVisibility()" id="toggleRoleBtn" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow">
+                        👁️ 點擊查看身分（翻開）
+                    </button>
 
                     <!-- 🕵️‍♂️ 盜賊選擇區 -->
                     <div id="thiefChoiceSection" class="hidden mt-4 pt-4 border-t border-slate-700">
@@ -186,14 +194,14 @@
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="thiefCardOptionsContainer"></div>
                     </div>
 
-                    <p class="text-xs text-slate-400 mt-4">✨ 此身分已與你的裝置綁定，請記住後將手機收起！</p>
+                    <p class="text-xs text-slate-400 mt-2">✨ 此身分已與你的裝置綁定，請記住後將手機收起！</p>
                 </div>
             </div>
         </div>
     </div>
 
     <script type="module">
-        import { setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
         const HOST_PASSWORD = "1234";
 
@@ -207,12 +215,15 @@
         let selectedRoleCounts = {};
         let countdownInterval = null;
         let titleClickCount = 0;
+        
+        // 用來記錄玩家當前手機畫面是否正在翻開狀態
+        window.isRoleRevealed = false;
+        window.currentRealRole = "";
 
-        // 改進版：直接無延遲快速連點 3 下觸發上帝登入
         window.handleTitleClick = function() {
             let savedId = localStorage.getItem('werewolf_my_claimed_id');
             if (savedId) {
-                return; // 已領取身分的玩家直接鎖定禁止進入
+                return;
             }
 
             titleClickCount++;
@@ -222,10 +233,26 @@
                 tryUnlockHost();
             }
 
-            // 1.5秒內沒有點滿3下則自動重置計數
             setTimeout(() => {
                 titleClickCount = 0;
             }, 1500);
+        };
+
+        // 👁️ 切換身分看見與隱藏（翻開／蓋上）
+        window.toggleMyRoleVisibility = function() {
+            window.isRoleRevealed = !window.isRoleRevealed;
+            const roleDisplay = document.getElementById('myRoleDisplay');
+            const toggleBtn = document.getElementById('toggleRoleBtn');
+
+            if (window.isRoleRevealed) {
+                roleDisplay.innerText = window.currentRealRole;
+                toggleBtn.innerText = "🔒 點擊隱藏身分（蓋上）";
+                toggleBtn.className = "w-full bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow";
+            } else {
+                roleDisplay.innerText = "???";
+                toggleBtn.innerText = "👁️ 點擊查看身分（翻開）";
+                toggleBtn.className = "w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow";
+            }
         };
 
         function initRolePicker() {
@@ -516,6 +543,7 @@
 
             try {
                 await updateDoc(window.roomDocRef, { players: players });
+                window.isRoleRevealed = false; // 重新領取時預設蓋牌
                 showMyIdentity(targetPlayer);
             } catch (err) {
                 console.error(err);
@@ -535,6 +563,7 @@
             try {
                 await updateDoc(window.roomDocRef, { players: players });
                 alert(`🎉 選擇完成！你最終的身分為：【${chosenRole}】`);
+                window.isRoleRevealed = true; // 盜賊選完後自動幫他翻開看一次
                 showMyIdentity(targetPlayer);
             } catch (err) {
                 console.error(err);
@@ -630,8 +659,22 @@
         };
 
         window.showMyIdentity = function(player) {
+            window.currentRealRole = player.role;
             document.getElementById('myIdDisplay').innerText = player.id;
-            document.getElementById('myRoleDisplay').innerText = player.role;
+            
+            const roleDisplay = document.getElementById('myRoleDisplay');
+            const toggleBtn = document.getElementById('toggleRoleBtn');
+
+            if (window.isRoleRevealed) {
+                roleDisplay.innerText = window.currentRealRole;
+                toggleBtn.innerText = "🔒 點擊隱藏身分（蓋上）";
+                toggleBtn.className = "w-full bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow";
+            } else {
+                roleDisplay.innerText = "???";
+                toggleBtn.innerText = "👁️ 點擊查看身分（翻開）";
+                toggleBtn.className = "w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-2.5 rounded-xl text-sm transition mb-3 shadow";
+            }
+
             document.getElementById('myIdentityCard').classList.remove('hidden');
 
             const thiefChoiceSection = document.getElementById('thiefChoiceSection');
