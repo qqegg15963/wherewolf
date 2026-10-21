@@ -39,20 +39,20 @@
         });
     </script>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen p-3 sm:p-6 font-sans flex flex-col justify-between">
+<body class="bg-slate-950 text-slate-100 min-h-screen p-3 sm:p-6 font-sans flex flex-col justify-between">
     <div class="max-w-4xl mx-auto w-full">
         <!-- 點擊大標題：普通連點 3 下解鎖；若被鎖定，快速連點 5 下即可救急強制解鎖 -->
         <h1 onclick="handleTitleClick()" class="text-2xl sm:text-3xl font-bold text-center mb-4 text-red-500 tracking-wider cursor-pointer select-none">🐺 狼人殺 🌙</h1>
 
         <!-- 👑 上帝介面（預設隱藏） -->
-        <div id="hostView" class="hidden bg-slate-800 p-4 sm:p-6 rounded-2xl shadow-xl border border-red-900/50 mb-8">
+        <div id="hostView" class="hidden bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-xl border border-red-900/50 mb-8">
             <div class="flex justify-between items-center mb-4 border-b border-slate-700 pb-3">
                 <h2 class="text-base sm:text-lg font-semibold text-amber-400">👑 上帝控制中心</h2>
                 <button onclick="lockHostMode()" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded text-slate-300">🔒 退出上帝模式</button>
             </div>
 
             <!-- 上帝二級分頁切換按鈕 -->
-            <div class="grid grid-cols-2 gap-2 mb-4 bg-slate-900 p-1.5 rounded-xl border border-slate-700">
+            <div class="grid grid-cols-2 gap-2 mb-4 bg-slate-950 p-1.5 rounded-xl border border-slate-800">
                 <button onclick="switchHostTab('config')" id="tabBtnConfig" class="py-2 rounded-lg font-bold text-sm bg-red-600 text-white shadow">
                     ⚙️ 1. 角色選擇配板
                 </button>
@@ -63,7 +63,7 @@
 
             <!-- ================= 畫面一：角色選擇配板區 ================= -->
             <div id="hostTabConfig">
-                <div class="flex justify-between items-center bg-slate-900 p-3 rounded-xl border border-slate-700 mb-4">
+                <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800 mb-4">
                     <div class="text-sm">
                         當前玩家總人數：<span id="totalSelectedCount" class="text-xl font-extrabold text-amber-400">0</span> 人
                     </div>
@@ -97,24 +97,24 @@
 
             <!-- ================= 畫面二：遊戲進行主持區 ================= -->
             <div id="hostTabGame" class="hidden">
-                <div id="hostThiefArea" class="hidden mb-4 p-3 bg-slate-900 border border-amber-500/50 rounded-xl">
+                <div id="hostThiefArea" class="hidden mb-4 p-3 bg-slate-950 border border-amber-500/50 rounded-xl">
                     <div class="text-amber-400 font-bold text-xs mb-1" id="hostThiefTitle">🕵️‍♂️ 底牌狀態：</div>
                     <div class="text-base font-extrabold text-red-400" id="hostThiefCardsDisplay">載入中...</div>
                 </div>
 
                 <!-- 📊 陣營存活即時統計 -->
-                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700 mb-4">
+                <div class="bg-slate-950 p-3.5 rounded-xl border border-slate-800 mb-4">
                     <div class="text-xs text-amber-300 font-bold mb-2">📊 當前場上陣營存活統計（即時監控綁票）</div>
                     <div class="grid grid-cols-3 gap-2 text-center">
-                        <div class="bg-slate-800 p-2 rounded-lg border border-red-900/50">
+                        <div class="bg-slate-900 p-2 rounded-lg border border-red-900/50">
                             <div class="text-[11px] text-red-400 font-semibold">🔴 壞人陣營</div>
                             <div class="text-xl font-extrabold text-white mt-1"><span id="statAliveWolves">0</span> <span class="text-xs text-slate-400">人</span></div>
                         </div>
-                        <div class="bg-slate-800 p-2 rounded-lg border border-emerald-900/50">
+                        <div class="bg-slate-900 p-2 rounded-lg border border-emerald-900/50">
                             <div class="text-[11px] text-emerald-400 font-semibold">🟢 神職人員</div>
                             <div class="text-xl font-extrabold text-white mt-1"><span id="statAliveGods">0</span> <span class="text-xs text-slate-400">人</span></div>
                         </div>
-                        <div class="bg-slate-800 p-2 rounded-lg border border-sky-900/50">
+                        <div class="bg-slate-900 p-2 rounded-lg border border-sky-900/50">
                             <div class="text-[11px] text-sky-400 font-semibold">⚪ 平民陣營</div>
                             <div class="text-xl font-extrabold text-white mt-1"><span id="statAliveCivilians">0</span> <span class="text-xs text-slate-400">人</span></div>
                         </div>
@@ -124,7 +124,7 @@
                 <!-- 工具箱：發言計時器 + 隨機抽發言玩家 -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
                     <!-- 發言計時器 -->
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col justify-between text-center">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between text-center">
                         <div class="text-sm text-amber-300 font-bold mb-2">⏱️ 上帝發言計時器</div>
                         <div id="timerDisplay" class="text-4xl sm:text-5xl font-mono font-black text-red-400 my-2 tracking-wider">01:00</div>
                         
@@ -137,7 +137,7 @@
                     </div>
 
                     <!-- 隨機發言抽籤 -->
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-700 flex flex-col justify-between">
+                    <div class="bg-slate-950 p-4 rounded-xl border border-slate-800 flex flex-col justify-between">
                         <div>
                             <div class="text-sm text-amber-300 font-bold mb-1">🎲 隨機抽存活發言玩家</div>
                             <div class="text-[11px] text-slate-500">（自動忽略已被淘汰死亡的玩家）</div>
@@ -149,7 +149,7 @@
                     </div>
                 </div>
 
-                <div class="border-t border-slate-700 pt-3">
+                <div class="border-t border-slate-800 pt-3">
                     <h3 class="text-xs font-semibold text-slate-400 mb-3">全場玩家號碼與身分監控（點擊可切換生死）：</h3>
                     <div id="hostStatusGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5">
                         <div class="text-slate-500 text-sm italic col-span-full text-center py-4">尚未開局發牌</div>
@@ -159,7 +159,7 @@
         </div>
 
         <!-- 👤 玩家介面 -->
-        <div id="playerView" class="bg-slate-800 p-5 sm:p-6 rounded-2xl shadow-xl border border-slate-700">
+        <div id="playerView" class="bg-slate-900 p-4 sm:p-6 rounded-2xl shadow-xl border border-slate-800">
             <h2 class="text-lg font-semibold text-amber-400 mb-4 text-center">👤 玩家身分領取</h2>
             
             <div id="playerWaitNotice" class="text-center py-8 text-slate-400">
@@ -169,32 +169,61 @@
             <div id="playerActiveSection" class="hidden">
                 <div class="mb-4">
                     <label class="block text-sm mb-2 text-slate-300">請選擇你的座次號碼：</label>
-                    <select id="playerSelectId" class="w-full bg-slate-900 border border-slate-600 rounded-lg p-3 text-white text-base">
+                    <select id="playerSelectId" class="w-full bg-slate-950 border border-slate-700 rounded-lg p-3 text-white text-base">
                         <option value="">請選擇號碼...</option>
                     </select>
                 </div>
                 <button onclick="playerClaimId()" class="w-full bg-blue-600 hover:bg-blue-700 font-bold py-3 rounded-xl shadow transition mb-6">🔒 確認並鎖定我的身分</button>
 
-                <!-- 身分卡片區 -->
-                <div id="myIdentityCard" class="hidden bg-slate-900 border-2 border-amber-500 p-6 rounded-2xl text-center shadow-lg">
-                    <div class="text-slate-400 text-sm mb-1">你的座次：<span id="myIdDisplay" class="text-amber-300 font-bold text-lg"></span> 號</div>
-                    
-                    <!-- 隱私遮蔽身分顯示區（字體加大放大） -->
-                    <div class="text-4xl sm:text-5xl font-black text-red-500 my-6 tracking-widest min-h-[60px] flex items-center justify-center" id="myRoleDisplay">???</div>
+                <!-- 超大實體卡牌展示區（參考高級狼人殺卡牌） -->
+                <div id="myIdentityCard" class="hidden">
+                    <!-- 頂部資訊列 -->
+                    <div class="flex justify-between items-center bg-slate-950 p-3 rounded-xl border border-slate-800 mb-3">
+                        <div class="text-xs text-slate-400 flex items-center gap-1.5">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                            <span>狼人殺身分卡</span>
+                        </div>
+                        <div class="text-xs font-bold text-amber-400 bg-amber-500/10 px-2.5 py-1 rounded-lg border border-amber-500/30">
+                            <span id="myIdDisplay">0</span> 號席位
+                        </div>
+                    </div>
+
+                    <!-- 🔥 巨大卡牌框 -->
+                    <div id="cardFrame" class="relative bg-slate-950 border-2 border-red-600/60 rounded-3xl p-6 text-center shadow-[0_0_25px_rgba(220,38,38,0.25)] min-h-[320px] flex flex-col justify-between items-center transition-all duration-300">
+                        
+                        <!-- 陣營標籤（右上方） -->
+                        <div class="w-full flex justify-end">
+                            <span id="myCampTag" class="text-xs font-bold px-3 py-1 rounded-full bg-red-900/50 text-red-300 border border-red-500/30">
+                                未知陣營
+                            </span>
+                        </div>
+
+                        <!-- 卡牌核心名稱（字體超級大） -->
+                        <div class="my-auto py-6">
+                            <div class="text-4xl sm:text-6xl font-black tracking-widest leading-tight text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.5)]" id="myRoleDisplay">
+                                ???
+                            </div>
+                        </div>
+
+                        <!-- 底部裝飾線條 -->
+                        <div class="w-full border-t border-slate-800/80 pt-2 text-[10px] text-slate-500">
+                            WEREWOLF GAME CARD
+                        </div>
+                    </div>
 
                     <!-- 👁️ 翻開與蓋上按鈕 -->
-                    <button onclick="toggleMyRoleVisibility()" id="toggleRoleBtn" class="w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-3 rounded-xl text-base transition mb-4 shadow">
+                    <button onclick="toggleMyRoleVisibility()" id="toggleRoleBtn" class="w-full mt-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-3.5 rounded-xl text-base transition shadow-lg flex items-center justify-center gap-2">
                         👁️ 點擊查看身分（翻開）
                     </button>
 
-                    <!-- 🕵️‍♂️ 盜賊選擇區 -->
-                    <div id="thiefChoiceSection" class="hidden mt-4 pt-4 border-t border-slate-700">
-                        <p class="text-amber-300 font-bold text-sm mb-1">🕵️‍♂️ 你抽到了「盜賊」！請強制選擇一張底牌替換：</p>
+                    <!-- 🕵️‍♂️ 盜賊選擇區（翻開身分且是盜賊時才顯示） -->
+                    <div id="thiefChoiceSection" class="hidden mt-4 p-4 bg-slate-950 border border-amber-500/50 rounded-2xl shadow-xl">
+                        <p class="text-amber-300 font-bold text-sm mb-1">🕵️‍♂️ 你抽到了「盜賊」！請選擇一張底牌替換：</p>
                         <p class="text-[11px] text-red-400 mb-3">⚠️ 若底牌含狼人牌，必須強制選擇狼人身分！</p>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2" id="thiefCardOptionsContainer"></div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5" id="thiefCardOptionsContainer"></div>
                     </div>
 
-                    <p class="text-xs text-slate-400 mt-2">✨ 此身分已與你的裝置綁定，請記住後將手機收起！</p>
+                    <p class="text-xs text-slate-400 text-center mt-3">✨ 此身分已與你的裝置綁定，請記住後將手機收起！</p>
                 </div>
             </div>
         </div>
@@ -235,21 +264,71 @@
             }
         };
 
+        // 👁️ 翻開／蓋上身分卡（並根據翻開狀態控制盜賊區的顯示）
         window.toggleMyRoleVisibility = function() {
             window.isRoleRevealed = !window.isRoleRevealed;
+            applyRoleCardUI();
+        };
+
+        function applyRoleCardUI() {
             const roleDisplay = document.getElementById('myRoleDisplay');
             const toggleBtn = document.getElementById('toggleRoleBtn');
+            const campTag = document.getElementById('myCampTag');
+            const cardFrame = document.getElementById('cardFrame');
+            const thiefChoiceSection = document.getElementById('thiefChoiceSection');
 
             if (window.isRoleRevealed) {
                 roleDisplay.innerText = window.currentRealRole;
-                toggleBtn.innerText = "🔒 點擊隱藏身分（蓋上）";
-                toggleBtn.className = "w-full bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-3 rounded-xl text-base transition mb-4 shadow";
+                toggleBtn.innerText = "🔒 點擊蓋上身分（防偷窺）";
+                toggleBtn.className = "w-full mt-4 bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-3.5 rounded-xl text-base transition shadow-lg flex items-center justify-center gap-2";
+
+                // 設定陣營標籤與邊框光澤
+                if (roleCategories.wolf.includes(window.currentRealRole)) {
+                    campTag.innerText = "🔴 狼人陣營";
+                    campTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-red-900/50 text-red-300 border border-red-500/30";
+                    cardFrame.className = "relative bg-slate-950 border-2 border-red-600 rounded-3xl p-6 text-center shadow-[0_0_25px_rgba(220,38,38,0.35)] min-h-[320px] flex flex-col justify-between items-center transition-all duration-300";
+                    roleDisplay.className = "text-4xl sm:text-6xl font-black tracking-widest leading-tight text-red-500 drop-shadow-[0_0_15px_rgba(239,68,68,0.6)]";
+                } else if (roleCategories.god.includes(window.currentRealRole)) {
+                    campTag.innerText = "🟢 好人神職";
+                    campTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-emerald-900/50 text-emerald-300 border border-emerald-500/30";
+                    cardFrame.className = "relative bg-slate-950 border-2 border-emerald-600 rounded-3xl p-6 text-center shadow-[0_0_25px_rgba(16,185,129,0.35)] min-h-[320px] flex flex-col justify-between items-center transition-all duration-300";
+                    roleDisplay.className = "text-4xl sm:text-6xl font-black tracking-widest leading-tight text-emerald-400 drop-shadow-[0_0_15px_rgba(16,185,129,0.6)]";
+                } else if (roleCategories.civilian.includes(window.currentRealRole)) {
+                    campTag.innerText = "⚪ 好人平民";
+                    campTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-sky-900/50 text-sky-300 border border-sky-500/30";
+                    cardFrame.className = "relative bg-slate-950 border-2 border-sky-600 rounded-3xl p-6 text-center shadow-[0_0_25px_rgba(14,165,233,0.35)] min-h-[320px] flex flex-col justify-between items-center transition-all duration-300";
+                    roleDisplay.className = "text-4xl sm:text-6xl font-black tracking-widest leading-tight text-sky-400 drop-shadow-[0_0_15px_rgba(14,165,233,0.6)]";
+                } else {
+                    campTag.innerText = "🟡 第三方陣營";
+                    campTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-amber-900/50 text-amber-300 border border-amber-500/30";
+                    cardFrame.className = "relative bg-slate-950 border-2 border-amber-600 rounded-3xl p-6 text-center shadow-[0_0_25px_rgba(245,158,11,0.35)] min-h-[320px] flex flex-col justify-between items-center transition-all duration-300";
+                    roleDisplay.className = "text-4xl sm:text-6xl font-black tracking-widest leading-tight text-amber-400 drop-shadow-[0_0_15px_rgba(245,158,11,0.6)]";
+                }
+
+                // 只有當「翻開卡牌」且「當前身分為盜賊」時，才顯示盜賊底牌替換區
+                let savedId = localStorage.getItem('werewolf_my_claimed_id');
+                let players = window.globalRoomData ? window.globalRoomData.players : [];
+                let myPlayer = players.find(p => p.id === parseInt(savedId));
+
+                if (myPlayer && myPlayer.initialRole === '盜賊' && myPlayer.role === '盜賊' && window.globalRoomData.hasThief) {
+                    thiefChoiceSection.classList.remove('hidden');
+                } else {
+                    thiefChoiceSection.classList.add('hidden');
+                }
+
             } else {
                 roleDisplay.innerText = "???";
+                roleDisplay.className = "text-4xl sm:text-6xl font-black tracking-widest leading-tight text-slate-600";
                 toggleBtn.innerText = "👁️ 點擊查看身分（翻開）";
-                toggleBtn.className = "w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-3 rounded-xl text-base transition mb-4 shadow";
+                toggleBtn.className = "w-full mt-4 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-3.5 rounded-xl text-base transition shadow-lg flex items-center justify-center gap-2";
+                campTag.innerText = "🔒 身分已蓋上";
+                campTag.className = "text-xs font-bold px-3 py-1 rounded-full bg-slate-800 text-slate-400 border border-slate-700";
+                cardFrame.className = "relative bg-slate-950 border-2 border-slate-800 rounded-3xl p-6 text-center shadow-md min-h-[320px] flex flex-col justify-between items-center transition-all duration-300";
+                
+                // 蓋上牌時強制隱藏盜賊底牌選擇區
+                thiefChoiceSection.classList.add('hidden');
             }
-        };
+        }
 
         function initRolePicker() {
             Object.values(roleCategories).flat().forEach(role => {
@@ -414,8 +493,6 @@
                 return;
             }
 
-            let hasThiefSelected = allCards.includes('盜賊');
-            
             // 隨機洗牌所有牌
             for (let i = allCards.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
@@ -424,7 +501,7 @@
 
             // 抽出 2 張當作底牌
             let extraCards = [allCards.pop(), allCards.pop()];
-            let playerRoles = allCards; // 剩下的直接發給玩家
+            let playerRoles = allCards; // 剩下的發給玩家
 
             // 檢查這局實際發牌給玩家後，有沒有人拿到盜賊
             let thiefAssigned = playerRoles.includes('盜賊');
@@ -602,7 +679,7 @@
                 data.players.forEach((p, idx) => {
                     let displayRole = p.initialRole === '盜賊' && p.role !== '盜賊' ? `${p.role} (原盜賊)` : p.role;
                     hostGrid.innerHTML += `
-                        <div class="bg-slate-900 p-2.5 rounded-xl border ${p.isDead ? 'border-red-900 opacity-40' : 'border-slate-700'} flex flex-col justify-between">
+                        <div class="bg-slate-950 p-2.5 rounded-xl border ${p.isDead ? 'border-red-900 opacity-40' : 'border-slate-800'} flex flex-col justify-between">
                             <div>
                                 <div class="text-amber-300 font-bold text-sm">${p.id} 號</div>
                                 <div class="text-red-400 text-xs font-semibold">${displayRole}</div>
@@ -646,40 +723,23 @@
             window.currentRealRole = player.role;
             document.getElementById('myIdDisplay').innerText = player.id;
             
-            const roleDisplay = document.getElementById('myRoleDisplay');
-            const toggleBtn = document.getElementById('toggleRoleBtn');
-
-            if (window.isRoleRevealed) {
-                roleDisplay.innerText = window.currentRealRole;
-                toggleBtn.innerText = "🔒 點擊隱藏身分（蓋上）";
-                toggleBtn.className = "w-full bg-amber-600/30 hover:bg-amber-600/50 border border-amber-500 text-amber-200 font-bold py-3 rounded-xl text-base transition mb-4 shadow";
-            } else {
-                roleDisplay.innerText = "???";
-                toggleBtn.innerText = "👁️ 點擊查看身分（翻開）";
-                toggleBtn.className = "w-full bg-slate-800 hover:bg-slate-700 border border-slate-600 text-amber-300 font-bold py-3 rounded-xl text-base transition mb-4 shadow";
-            }
-
             document.getElementById('myIdentityCard').classList.remove('hidden');
 
-            const thiefChoiceSection = document.getElementById('thiefChoiceSection');
+            // 渲染盜賊選項按鈕
             const thiefContainer = document.getElementById('thiefCardOptionsContainer');
-
-            // 只有當初發牌時有配置盜賊，且該玩家拿的是盜賊，且尚未選過身分時才顯示選擇區
             if (window.globalRoomData.hasThief && player.initialRole === '盜賊' && player.role === '盜賊' && window.globalRoomData.thiefExtraCards) {
-                thiefChoiceSection.classList.remove('hidden');
                 thiefContainer.innerHTML = '';
-                
                 window.globalRoomData.thiefExtraCards.forEach((role, idx) => {
                     thiefContainer.innerHTML += `
-                        <button onclick="playerChooseRole('${role}')" class="bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/50 p-3 rounded-xl text-amber-300 font-bold text-xs sm:text-sm shadow flex flex-col items-center justify-center">
+                        <button onclick="playerChooseRole('${role}')" class="bg-amber-600/20 hover:bg-amber-600/40 border border-amber-500/50 p-3.5 rounded-xl text-amber-300 font-bold text-xs sm:text-sm shadow flex flex-col items-center justify-center transition">
                             <span>選擇底牌 ${idx + 1}</span>
-                            <span class="text-base text-white mt-1">【${role}】</span>
+                            <span class="text-lg text-white mt-1">【${role}】</span>
                         </button>
                     `;
                 });
-            } else {
-                thiefChoiceSection.classList.add('hidden');
             }
+
+            applyRoleCardUI();
         };
 
         initRolePicker();
