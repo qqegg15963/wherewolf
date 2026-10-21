@@ -41,7 +41,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-3 sm:p-6 font-sans flex flex-col justify-between">
     <div class="max-w-4xl mx-auto w-full">
-        <!-- 點擊大標題 3 下即可觸發「上帝登入」暗門（若已領取身分的玩家則會被鎖定失效） -->
+        <!-- 點擊大標題 3 下即可觸發「上帝登入」暗門 -->
         <h1 onclick="handleTitleClick()" class="text-2xl sm:text-3xl font-bold text-center mb-4 text-red-500 tracking-wider cursor-pointer select-none">🐺 狼人殺 🌙</h1>
 
         <!-- 👑 上帝介面（預設隱藏） -->
@@ -100,6 +100,25 @@
                 <div id="hostThiefArea" class="hidden mb-4 p-3 bg-slate-900 border border-amber-500/50 rounded-xl">
                     <div class="text-amber-400 font-bold text-xs mb-1">🕵️‍♂️ 本局包含「盜賊」！系統扣除的 2 張底牌為：</div>
                     <div class="text-base font-extrabold text-red-400" id="hostThiefCardsDisplay">等待盜賊玩家選擇中...</div>
+                </div>
+
+                <!-- 📊 陣營存活即時統計（新增：用來判斷綁票） -->
+                <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700 mb-4">
+                    <div class="text-xs text-amber-300 font-bold mb-2">📊 當前場上陣營存活統計（即時監控綁票）</div>
+                    <div class="grid grid-cols-3 gap-2 text-center">
+                        <div class="bg-slate-800 p-2 rounded-lg border border-red-900/50">
+                            <div class="text-[11px] text-red-400 font-semibold">🔴 壞人陣營</div>
+                            <div class="text-xl font-extrabold text-white mt-1"><span id="statAliveWolves">0</span> <span class="text-xs text-slate-400">人</span></div>
+                        </div>
+                        <div class="bg-slate-800 p-2 rounded-lg border border-emerald-900/50">
+                            <div class="text-[11px] text-emerald-400 font-semibold">🟢 神職人員</div>
+                            <div class="text-xl font-extrabold text-white mt-1"><span id="statAliveGods">0</span> <span class="text-xs text-slate-400">人</span></div>
+                        </div>
+                        <div class="bg-slate-800 p-2 rounded-lg border border-sky-900/50">
+                            <div class="text-[11px] text-sky-400 font-semibold">⚪ 平民陣營</div>
+                            <div class="text-xl font-extrabold text-white mt-1"><span id="statAliveCivilians">0</span> <span class="text-xs text-slate-400">人</span></div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- 工具箱：發言計時器 + 隨機抽發言玩家 -->
@@ -174,7 +193,7 @@
     </div>
 
     <script type="module">
-        import { setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 
         const HOST_PASSWORD = "1234";
 
@@ -190,11 +209,9 @@
         let titleClickCount = 0;
         let titleClickTimer = null;
 
-        // 點擊標題 3 下觸發上帝登入暗門（若已領取身分則自動封鎖）
         window.handleTitleClick = function() {
             let savedId = localStorage.getItem('werewolf_my_claimed_id');
             if (savedId) {
-                // 已領取過身分的玩家，禁止開啟上帝登入
                 return;
             }
 
@@ -537,6 +554,10 @@
                 hostThiefArea.classList.add('hidden');
                 waitNotice.classList.remove('hidden');
                 activeSection.classList.add('hidden');
+                // 歸零統計
+                document.getElementById('statAliveWolves').innerText = 0;
+                document.getElementById('statAliveGods').innerText = 0;
+                document.getElementById('statAliveCivilians').innerText = 0;
             } else {
                 if (data.hasThief && data.thiefExtraCards && data.thiefExtraCards.length > 0) {
                     hostThiefArea.classList.remove('hidden');
@@ -544,6 +565,27 @@
                 } else {
                     hostThiefArea.classList.add('hidden');
                 }
+
+                // 計算即時陣營存活人數
+                let aliveWolves = 0;
+                let aliveGods = 0;
+                let aliveCivilians = 0;
+
+                data.players.forEach(p => {
+                    if (!p.isDead) {
+                        if (roleCategories.wolf.includes(p.role)) {
+                            aliveWolves++;
+                        } else if (roleCategories.god.includes(p.role)) {
+                            aliveGods++;
+                        } else {
+                            aliveCivilians++; // 平民與第三方（如野孩子等未獨立計算時歸類於此）
+                        }
+                    }
+                });
+
+                document.getElementById('statAliveWolves').innerText = aliveWolves;
+                document.getElementById('statAliveGods').innerText = aliveGods;
+                document.getElementById('statAliveCivilians').innerText = aliveCivilians;
 
                 hostGrid.innerHTML = '';
                 data.players.forEach((p, idx) => {
