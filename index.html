@@ -41,7 +41,7 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen p-3 sm:p-6 font-sans flex flex-col justify-between">
     <div class="max-w-4xl mx-auto w-full">
-        <!-- 點擊大標題 3 下即可觸發「上帝登入」暗門 -->
+        <!-- 點擊大標題：普通連點 3 下解鎖；若被玩家鎖定，快速連點 5 下即可救急強制解鎖 -->
         <h1 onclick="handleTitleClick()" class="text-2xl sm:text-3xl font-bold text-center mb-4 text-red-500 tracking-wider cursor-pointer select-none">🐺 狼人殺 🌙</h1>
 
         <!-- 👑 上帝介面（預設隱藏） -->
@@ -102,7 +102,7 @@
                     <div class="text-base font-extrabold text-red-400" id="hostThiefCardsDisplay">等待盜賊玩家選擇中...</div>
                 </div>
 
-                <!-- 📊 陣營存活即時統計（用來判斷綁票） -->
+                <!-- 📊 陣營存活即時統計 -->
                 <div class="bg-slate-900 p-3.5 rounded-xl border border-slate-700 mb-4">
                     <div class="text-xs text-amber-300 font-bold mb-2">📊 當前場上陣營存活統計（即時監控綁票）</div>
                     <div class="grid grid-cols-3 gap-2 text-center">
@@ -201,7 +201,7 @@
     </div>
 
     <script type="module">
-        import { setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { setDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
         const HOST_PASSWORD = "1234";
 
@@ -215,30 +215,28 @@
         let selectedRoleCounts = {};
         let countdownInterval = null;
         let titleClickCount = 0;
+        let titleClickTimer = null;
         
-        // 用來記錄玩家當前手機畫面是否正在翻開狀態
         window.isRoleRevealed = false;
         window.currentRealRole = "";
 
+        // 改進版救急點擊：3連擊普通進入，若被鎖定快速5連擊可強制觸發上帝登入
         window.handleTitleClick = function() {
             let savedId = localStorage.getItem('werewolf_my_claimed_id');
-            if (savedId) {
-                return;
-            }
-
             titleClickCount++;
             
-            if (titleClickCount >= 3) {
+            clearTimeout(titleClickTimer);
+            titleClickTimer = setTimeout(() => {
+                titleClickCount = 0;
+            }, 1500);
+
+            // 未鎖定狀況：點擊 3 下進入；若已被鎖定：快速點擊 5 下強制救急解鎖
+            if ((!savedId && titleClickCount >= 3) || (savedId && titleClickCount >= 5)) {
                 titleClickCount = 0;
                 tryUnlockHost();
             }
-
-            setTimeout(() => {
-                titleClickCount = 0;
-            }, 1500);
         };
 
-        // 👁️ 切換身分看見與隱藏（翻開／蓋上）
         window.toggleMyRoleVisibility = function() {
             window.isRoleRevealed = !window.isRoleRevealed;
             const roleDisplay = document.getElementById('myRoleDisplay');
@@ -543,7 +541,7 @@
 
             try {
                 await updateDoc(window.roomDocRef, { players: players });
-                window.isRoleRevealed = false; // 重新領取時預設蓋牌
+                window.isRoleRevealed = false;
                 showMyIdentity(targetPlayer);
             } catch (err) {
                 console.error(err);
@@ -563,7 +561,7 @@
             try {
                 await updateDoc(window.roomDocRef, { players: players });
                 alert(`🎉 選擇完成！你最終的身分為：【${chosenRole}】`);
-                window.isRoleRevealed = true; // 盜賊選完後自動幫他翻開看一次
+                window.isRoleRevealed = true;
                 showMyIdentity(targetPlayer);
             } catch (err) {
                 console.error(err);
