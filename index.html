@@ -470,7 +470,6 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         };
 
-        // 🎲 發牌核心邏輯：只有勾選「盜賊」時才扣 2 張當底牌，否則卡牌數等於玩家數
         window.hostStartGame = async function() {
             let allCards = [];
             Object.entries(selectedRoleCounts).forEach(([role, count]) => {
@@ -486,7 +485,6 @@
 
             let hasThiefSelected = allCards.includes('盜賊');
             
-            // 隨機洗牌
             for (let i = allCards.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [allCards[i], allCards[j]] = [allCards[j], allCards[i]];
@@ -496,11 +494,9 @@
             let playerRoles = [];
 
             if (hasThiefSelected) {
-                // 有盜賊時：抽 2 張當底牌，其餘發給玩家
                 extraCards = [allCards.pop(), allCards.pop()];
                 playerRoles = allCards;
             } else {
-                // 沒盜賊時：所有選擇的牌全部發給玩家
                 extraCards = [];
                 playerRoles = allCards;
             }
@@ -563,7 +559,6 @@
             }
         };
 
-        // 🔒 玩家選擇號碼並永久綁定該裝置
         window.playerClaimId = async function() {
             const select = document.getElementById('playerSelectId');
             const selectedId = parseInt(select.value);
@@ -693,14 +688,12 @@
                 waitNotice.classList.add('hidden');
                 activeSection.classList.remove('hidden');
                 
-                // 檢查該裝置是否已經選過號碼
                 let myDeviceToken = localStorage.getItem('werewolf_device_token');
                 let savedId = localStorage.getItem('werewolf_my_claimed_id');
 
                 if (myDeviceToken && savedId) {
                     let matchedPlayer = data.players.find(p => p.id === parseInt(savedId));
                     if (matchedPlayer && matchedPlayer.claimedBy === myDeviceToken) {
-                        // 已選過號碼：直接隱藏選擇下拉選單，鎖定該玩家介面
                         document.getElementById('selectSeatBox').classList.add('hidden');
                         showMyIdentity(matchedPlayer);
                     } else {
@@ -710,7 +703,10 @@
                     document.getElementById('selectSeatBox').classList.remove('hidden');
                     let currentSelectedVal = select.value;
                     select.innerHTML = '<option value="">請選擇號碼...</option>';
-                    for (let i = 1; i <= data.count; i++) {
+                    
+                    // 🛡️ 安全修復：結合 data.count 與實際 players 陣列長度，確保號碼一定能順利產生
+                    let totalCount = data.count || (data.players ? data.players.length : 0);
+                    for (let i = 1; i <= totalCount; i++) {
                         let p = data.players.find(x => x.id === i);
                         let statusText = p && p.claimedBy ? ' (已被選)' : '';
                         select.innerHTML += `<option value="${i}" ${p && p.claimedBy ? 'disabled' : ''}>${i} 號玩家${statusText}</option>`;
